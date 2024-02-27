@@ -1,7 +1,7 @@
 const { Client, MessageMedia } = require('whatsapp-web.js')
 const qrcode = require('qrcode-terminal')
 const axios = require('axios')
-const run = require('./gemini/gemini.js');
+const run = require('./conf/gemini.js');
 const {LocalAuth } = require('whatsapp-web.js');
 
 
@@ -20,15 +20,11 @@ client.on('ready', () => {
 
 client.on('message_create', msg => {
     const command = msg.body.split(' ')[0];
-   // console.log("NUMERO (" + msg.from + "): " + msg.body)
-   // console.log(msg) 
-   const sender = msg.from.includes("85067794") ? msg.to : msg.from
-    if (command === "\sticker"){
+    console.log("NUMERO (" + msg.from + "): " + msg.body)
+    const sender = msg.from.includes("85067794") ? msg.to : msg.from
+    if (command === "/sticker"){
         generateStaticSticker(msg, sender)
-    } else if (command === "\stickerGif"){
-        generateAnimatedSticker(msg, sender)
-    }
-    
+    } 
     if(msg.body.startsWith("/") && msg.type === "chat") {
         run(msg.body).then((response) => {
             client.sendMessage(sender, response)
@@ -63,15 +59,4 @@ const generateStaticSticker = async (msg, sender) => {
             msg.reply("❌ Não foi possível gerar um sticker com esse link")
         }
     }
-}
-
-const generateAnimatedSticker = async (msg, sender) => {
-    if(msg.type === "video") {
-        try {
-            const media = await MessageMedia.fromUrl(msg.body.split(" ")[1])
-            await client.sendMessage(sender, media, { sendMediaAsSticker: true })
-        } catch(e) {
-            msg.reply("❌ Erro ao processar vídeo")
-        }
-    } 
 }
