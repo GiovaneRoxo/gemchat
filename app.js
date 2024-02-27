@@ -1,7 +1,7 @@
 const { Client, MessageMedia } = require('whatsapp-web.js')
 const qrcode = require('qrcode-terminal')
 const axios = require('axios')
-const run = require('./conf/gemini.js');
+const run = require('./api/gemini.js');
 const {LocalAuth } = require('whatsapp-web.js');
 
 
@@ -25,7 +25,7 @@ client.on('message_create', msg => {
     if (command === "/sticker"){
         generateStaticSticker(msg, sender)
     } 
-    if(msg.body.startsWith("/") && msg.type === "chat") {
+    if(msg.body.startsWith("!") && msg.type === "chat") {
         run(msg.body).then((response) => {
             client.sendMessage(sender, response)
         }).catch((e) => {
